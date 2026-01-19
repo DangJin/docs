@@ -1,72 +1,75 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "默认模块",
+    "description": "",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
+  "tags": [],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/v1/image-generation": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "图像生成-创建任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
         "requestBody": {
-          "description": "Plant to add to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "title": "提示词",
+                    "description": "建议不超过300个汉字或600个英文单词"
+                  },
+                  "model": {
+                    "type": "string",
+                    "title": "模型",
+                    "description": "目前只支持:seedream-4.5,nano-banana-pro-light-i2i，gemini-3-pro-image-text-to-image，gemini-2.5-flash-image-text-to-image"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "参考图片",
+                    "description": "不超过10张，图片≤ 10MB"
+                  },
+                  "size": {
+                    "type": "string",
+                    "title": "图像尺寸",
+                    "description": "1x1, 2x3, 3x2, 3x4, 4x3, 4x5, 5x4, 9x16, 16x9, 21x9。nano-banana-pro-light-i2i，gemini-3-pro-image-text-to-image模型支持"
+                  },
+                  "quality": {
+                    "type": "string",
+                    "description": "指定生成图像的尺寸信息。seedream-4.5:2K、4K,nano-banana-pro-light-i2i，gemini-3-pro-image-text-to-image:1K、2K、4K",
+                    "title": "生成图像质量,分辨率"
+                  },
+                  "max_images": {
+                    "type": "integer",
+                    "title": "生成图片最大数量",
+                    "description": "maxNum=4。模型会尽可能生成对应数量的图片，不保证一定生成对应数量图片"
+                  }
+                },
+                "required": [
+                  "prompt",
+                  "model",
+                  "images"
+                ]
+              },
+              "example": {
+                "prompt": "固定镜头，前景主角用手中的毛巾擦拭手中的相机，表情放松，后景两位人物整理书包",
+                "model": "gemini-3-pro-image-text-to-image",
+                "images": [
+                  "https://zqingalioss.wozhangwan.com/zhangqing-test/uploads/14146/2026-01-16/1768547580_22CnfX5AAB.png",
+                  "https://zqingalioss.wozhangwan.com/zhangqing-test/uploads/14146/2026-01-16/1768547986_x6dfsSxPGS.png"
+                ],
+                "max_images": 4,
+                "size": "16x9",
+                "quality": "2K"
               }
             }
           },
@@ -74,144 +77,843 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "task_id"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "task_id": "d69cbf03-bb75-4928-b518-52c958b6b092"
+                  },
+                  "msg": "",
+                  "request_id": "68982830-2b37-441e-a387-3a9de2737b92"
                 }
               }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            },
+            "headers": {}
           }
-        }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/v1/query/image-generation": {
+      "get": {
+        "summary": "图像生成-获取任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "name": "task_id",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "53658251-dc0d-4883-896e-5b77c355a3b5",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "title": "任务ID"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "title": "提示词"
+                        },
+                        "status": {
+                          "type": "string",
+                          "title": "状态",
+                          "description": "processing:处理中。completed:已完成。\nfailed:失败"
+                        },
+                        "images": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "title": "输入图片列表"
+                        },
+                        "output_images": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "title": "AI生成图像列表"
+                        },
+                        "model_name": {
+                          "type": "string",
+                          "title": "模型名称"
+                        },
+                        "metadata": {
+                          "type": "string"
+                        },
+                        "msg": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "task_id",
+                        "prompt",
+                        "status",
+                        "images",
+                        "output_images",
+                        "model_name",
+                        "metadata",
+                        "msg"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "task_id": "53658251-dc0d-4883-896e-5b77c355a3b5",
+                    "prompt": "第1张克林被弗利萨用念力控制到空中后爆炸，第二张孙悟空愤怒咆哮，第3张孙悟空变身成为超级赛亚人，第4张孙悟空击杀弗利萨",
+                    "status": "Success",
+                    "images": [
+                      "https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14Br18kTksWg1xwAX0_rY7kAkx3sXsX410XxkxQrY0ky_vVI/72f5caa292477ef2b067cb03cb17d6.png",
+                      "https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14Br18kTksWg1xwAX0_rY7kAkx3sXsX410XxkxQrY0ky_vVI/72f5caa292477ef2b067cb03cb17d6.png",
+                      "https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14Br18kTksWg1xwAX0_rY7kAkx3sXsX410XxkxQrY0ky_vVI/72f5caa292477ef2b067cb03cb17d6.png",
+                      "https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14Br18kTksWg1xwAX0_rY7kAkx3sXsX410XxkxQrY0ky_vVI/72f5caa292477ef2b067cb03cb17d6.png",
+                      "https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14Br18kTksWg1xwAX0_rY7kAkx3sXsX410XxkxQrY0ky_vVI/72f5caa292477ef2b067cb03cb17d6.png"
+                    ],
+                    "output_images": [
+                      "https://cos-output-image.ppinfra.com/prod/fusion-2b48e3c5-0a94-4a57-a600-92c83fe86865?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768448163%3B1768620963&q-key-time=1768448163%3B1768620963&q-header-list=host&q-url-param-list=&q-signature=2b8ef52945e73c46e836f3173bc181d435afffcc",
+                      "https://cos-output-image.ppinfra.com/prod/fusion-5ff8070c-cd3a-4441-bc1f-f4904c11edda?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768448169%3B1768620969&q-key-time=1768448169%3B1768620969&q-header-list=host&q-url-param-list=&q-signature=b5a507ebea672d17d63e7b97f02cf1d3fe16ea8b",
+                      "https://cos-output-image.ppinfra.com/prod/fusion-fe5b2bf1-83f8-49f4-aeb5-7043a3731aeb?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768448173%3B1768620973&q-key-time=1768448173%3B1768620973&q-header-list=host&q-url-param-list=&q-signature=91c3f8f06b80c0331825ac034338aa4f8ea9c19b",
+                      "https://cos-output-image.ppinfra.com/prod/fusion-6b248d10-8d2f-4015-a153-65244fc541c3?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768448176%3B1768620976&q-key-time=1768448176%3B1768620976&q-header-list=host&q-url-param-list=&q-signature=8dad7cb3991871984f783799b921b8c3c5c4899d"
+                    ],
+                    "model_name": "seedream-4.5",
+                    "metadata": "",
+                    "msg": ""
+                  },
+                  "msg": "",
+                  "request_id": "b858b2dd-8199-45e7-bdca-61790fa893ac"
                 }
               }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/query/images": {
+      "get": {
+        "summary": "图像生成-分页获取任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "num",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "10",
+            "schema": {
+              "type": "string"
             }
           }
-        }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": "{\n    \"code\": 0,\n    \"data\": {\n        \"page\": 1,\n        \"num\": 10,\n        \"more\": true,\n        \"images\": [\n            {\n                \"task_id\": \"c8a38367-41f6-454c-8e0c-712097118fa3\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点，生成3张照片\",\n                \"images\": [],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Processing\"\n            },\n            {\n                \"task_id\": \"6ee3e309-742f-4fbf-a220-f1908fa08bea\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点，生成3张照片\",\n                \"images\": [\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-cfd41c52-0b43-4cf9-baca-540dfe95460c?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768270585%3B1768443385&q-key-time=1768270585%3B1768443385&q-header-list=host&q-url-param-list=&q-signature=8d8c94061fde2eaa6316bb0450cf674f2cf80807\",\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-4e305138-2c7f-4594-9f21-b4d4ef616e59?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768270588%3B1768443388&q-key-time=1768270588%3B1768443388&q-header-list=host&q-url-param-list=&q-signature=fe208f897e491623fcbdda61824e7fc3b9128d04\",\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-733a6f18-9a7c-4146-85ee-918323722ebe?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768270596%3B1768443396&q-key-time=1768270596%3B1768443396&q-header-list=host&q-url-param-list=&q-signature=234d09708389d7986e70d840201d25008e1cf83b\"\n                ],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"0d2b39d9-f93f-4de1-adc9-0cf1052c17d9\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-9d153bc0-94a0-41d7-98c9-44e412aa5d48?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768209373%3B1768382173&q-key-time=1768209373%3B1768382173&q-header-list=host&q-url-param-list=&q-signature=9a04c42bd8dd9e4a2b818560b483d7d7a2112b6d\"\n                ],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"a506c092-2373-4336-bcd4-40d7b02f7b22\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-db6d88fc-dee3-4d26-9d4b-bba2f98b94b3?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768208776%3B1768381576&q-key-time=1768208776%3B1768381576&q-header-list=host&q-url-param-list=&q-signature=7d7778478c1775692e7693a0601017a83e453b74\"\n                ],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"03d00a71-dd6f-4ab7-901d-cb54943bc8ae\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\n                    \"https://apioss.sydney-ai.com/img/2/t9il_91djAoN_r1yk8nTYDXUtD2lR7Wmj8XNR5og_rXLe91NYsJut7VzDso8Y8Lxt7WCjpgxfa-nXa1Aj7JLkakuX03r15lqk7Fqj7kVXvXL10-l1xhAY5VmR8_=/8c941532-eea6-4071-8ae8-f94ce044282e.png\"\n                ],\n                \"model_name\": \"nano-banana-pro-light-i2i\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"dbeb245a-88cf-48d5-89c0-14ccfe647187\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [],\n                \"model_name\": \"nano-banana-pro-light-i2i\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Processing\"\n            },\n            {\n                \"task_id\": \"7b6003a0-b4d2-41c5-aabf-0595e556c62b\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\n                    \"https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14o8X8FTkxMVXvXgfvQpYvkqfaXLY0JwXpknkawpf0-ytIbLYm==/f6e5b294ca8a3df893ed5d761a9384.jpeg\",\n                    \"https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14BA10Wgf7Fs1sYLXp-VfaigfvFsX0hp1pQrYxhrXa_ytIbLYm==/201a9e63fe74994a8e6483317f8757.jpeg\",\n                    \"https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14ogfa-TX0_qf0_qXskn1xQlf7FVkxXxXs-AfaMmX71ytIbLYm==/a9454788787f12149e9b3c7d29205c.jpeg\",\n                    \"https://apioss.sydney-ai.com/img/1/t9il_91djAom_8ByY8LCYDXV_riLR5VptDiLjsXwR4BA10Ms10Qn14oLXaWLksX81pFr1ahTf7Y4Xa3V1sigksQqk7Y81p_ytIbLYm==/e51eccf3571859fb5093daca8aff37.jpeg\"\n                ],\n                \"model_name\": \"nano-banana-pro-light-i2i\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"c0677301-6fd8-4f49-b3ed-91acd25f8f39\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\n                    \"https://cos-output-image.ppinfra.com/prod/fusion-072446ca-f13c-4701-984e-15723d39177c?q-sign-algorithm=sha1&q-ak=YOUR_ACCESS_KEY_ID&q-sign-time=1768197833%3B1768370633&q-key-time=1768197833%3B1768370633&q-header-list=host&q-url-param-list=&q-signature=bcf338402b83ebfef9976fc0f4239018fd589339\"\n                ],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"c1deda3f-ef3d-4b10-8d50-a49fa66aa196\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [\"https://cos-output-image.ppinfra.com/prod/fusion-85b3920a-0596-4dfa-97b4-53373d628b3a?q-sign-algorithm=sha1\\&q-ak=YOUR_ACCESS_KEY_ID\\&q-sign-time=1768186806%3B1768359606\\&q-key-time=1768186806%3B1768359606\\&q-header-list=host\\&q-url-param-list=\\&q-signature=d4d81475181b546611dbbe588b0f1c95eb7d7cc4\"\n                ],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"\",\n                \"status\": \"Success\"\n            },\n            {\n                \"task_id\": \"7735ebdb-9e55-40f3-ad67-48897d11d89b\",\n                \"prompt\": \"曼联1:2负于布赖顿，球迷伤心到了极点\",\n                \"images\": [],\n                \"model_name\": \"seedream-4.5\",\n                \"metadata\": \"\",\n                \"msg\": \"ppio api returned status 400: {\\\"code\\\":400,\\\"reason\\\":\\\"INVALID_REQUEST_BODY\\\",\\\"message\\\":\\\"{\\\\\\\"error\\\\\\\":{\\\\\\\"code\\\\\\\":\\\\\\\"InvalidParameter\\\\\\\",\\\\\\\"message\\\\\\\":\\\\\\\"Timeout while downloading url=https://bbsimg.duoduocdn.com/bbsimg/shot/images/share_match_image/20260112/zhanbao_image_1871178_1768155717_gray.jpeg. Request id: 021768186682228b825dd5258dc4c388f66926d17e5fb9c2f9ea7\\\\\\\",\\\\\\\"param\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"type\\\\\\\":\\\\\\\"\\\\\\\"}}\\\",\\\"metadata\\\":{\\\"trace_id\\\":\\\"a239d673fff0f05deadac25e53c0f5c4\\\"}}\\n\",\n                \"status\": \"Failed\"\n            }\n        ]\n    },\n    \"msg\": \"\",\n    \"request_id\": \"097b1eb8-eb1d-41ef-89f4-7b5ffaa1708a\"\n}"
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/v1/video-generation": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "视频生成-创建任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
         "requestBody": {
-          "description": "Plant added to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "title": "提示词",
+                    "description": "最长2000字符"
+                  },
+                  "model": {
+                    "type": "string",
+                    "title": "模型名称",
+                    "description": "MiniMax-Hailuo-02,sora-2,wan2.6-t2v,wan2.6-i2v"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "title": "视频时长",
+                    "description": "MiniMax-Hailuo-02:6,10。sora-2:10,15。wan2.6-t2v/wan2.6-i2v:5,10,15"
+                  },
+                  "metadata": {
+                    "type": "string"
+                  },
+                  "first_frame_image": {
+                    "type": "string",
+                    "title": "首帧图片",
+                    "description": "模型根据首帧图片生成视频 wan2.6必选"
+                  },
+                  "last_frame_image": {
+                    "type": "string",
+                    "title": "尾帧图片",
+                    "description": "模型根据首帧图片生成视频"
+                  },
+                  "passthrough": {
+                    "type": "boolean",
+                    "title": "ai直出",
+                    "description": "目前只有测试账号&掌玩账号在海螺模型下可用"
+                  }
+                },
+                "required": [
+                  "prompt",
+                  "model",
+                  "duration"
+                ]
+              },
+              "example": {
+                "prompt": "孙悟空愤怒，怒发冲冠",
+                "duration": 6,
+                "model": "minimax-hailuo2.3-fast-i2v",
+                "resolution": "768P",
+                "first_frame_image": "https://apioss.sydney-ai.com/img/2/t9il_91djAoN_r1yk8nTYDXUtD2lR7Wmj8XNR5og_rXLe91NYsJut7VzDso8Y8Lxt7WCjpiL1sJwkp3mj7FT1pwuXvJ8fZlq10MVj7Xxka3T1aQAXskpfZVmR8_=/4e3edc00-e539-4ef8-8029-cca051127f38.png"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "title": "任务id",
+                          "description": "可用此ID获取任务详情以及下载地址"
+                        }
+                      },
+                      "required": [
+                        "task_id"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "task_id": "5898d591-4ee2-4746-9dca-1b09ccbe8e4b"
+                  },
+                  "msg": "",
+                  "request_id": "5601634e-b6e4-426c-9116-1a81f1c7066a"
+                }
+              }
+            },
+            "headers": {}
           }
-        }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/query/video-generation": {
+      "get": {
+        "summary": "视频生成-获取任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "f8d463d7-6924-4eab-9033-0e32bd6dbf2d",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "title": "任务id"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "title": "提示词"
+                        },
+                        "file_url": {
+                          "type": "string"
+                        },
+                        "first_frame_image": {
+                          "type": "string"
+                        },
+                        "last_frame_image": {
+                          "type": "string"
+                        },
+                        "model_name": {
+                          "type": "string",
+                          "title": "模型名称"
+                        },
+                        "duration": {
+                          "type": "integer",
+                          "title": "视频时长"
+                        },
+                        "metadata": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "title": "状态",
+                          "description": "processing:处理中。completed:已完成。\nfailed:失败"
+                        }
+                      },
+                      "required": [
+                        "task_id",
+                        "prompt",
+                        "file_url",
+                        "first_frame_image",
+                        "last_frame_image",
+                        "model_name",
+                        "duration",
+                        "metadata",
+                        "status"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/query/videos": {
+      "get": {
+        "summary": "视频生成-分页获取任务列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "num",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "3",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "offset": {
+                          "type": "integer",
+                          "title": "游标",
+                          "description": "当more=true，在发起请求参数offset取此值"
+                        },
+                        "more": {
+                          "type": "boolean",
+                          "title": "是否有下一数据",
+                          "description": "当more=true代表有下一页"
+                        },
+                        "videos": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "task_id": {
+                                "type": "string",
+                                "title": "任务id"
+                              },
+                              "prompt": {
+                                "type": "string",
+                                "title": "提示词",
+                                "description": "限制2000个字符以内"
+                              },
+                              "model_name": {
+                                "type": "string",
+                                "title": "模型名称",
+                                "description": "例如：MiniMax-Hailuo-02"
+                              },
+                              "duration": {
+                                "type": "integer",
+                                "title": "视频时长",
+                                "description": "限制1-10s"
+                              },
+                              "metadata": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "title": "状态",
+                                "description": "processing:处理中。completed:已完成。\nfailed:失败"
+                              }
+                            },
+                            "required": [
+                              "task_id",
+                              "prompt",
+                              "model_name",
+                              "duration",
+                              "metadata",
+                              "status"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "offset",
+                        "more",
+                        "videos"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "offset": 9,
+                    "more": true,
+                    "videos": [
+                      {
+                        "task_id": "46a54eb2-6359-4af0-976f-95906355437a",
+                        "prompt": "20岁的程序员疯狂的找bug3",
+                        "file_url": "https://auroraai-asset.visionular.cn/oss%3A//ali-vod-f/output-videoai/zhangwan-aigc/ai-genscale/1200/2025/12/15/19/46a54eb2-6359-4af0-976f-95906355437a/output.mp4?x-oss-credential=LTAI5tS2SAichCVt5idUKeg4%2F20251217%2Fcn-hangzhou%2Foss%2Faliyun_v4_request&x-oss-date=20251217T071420Z&x-oss-expires=1800&x-oss-signature=d63e585e78e4c8e07ccfaea6af82e2fc4a9a2c7b3240a0c945156b32c32cab0d&x-oss-signature-version=OSS4-HMAC-SHA256",
+                        "first_frame_image": "",
+                        "last_frame_image": "",
+                        "model_name": "MiniMax-Hailuo-02",
+                        "duration": 10,
+                        "metadata": "",
+                        "status": "Success"
+                      },
+                      {
+                        "task_id": "51af64a9-1297-4a75-9a99-1ef87d959609",
+                        "prompt": "20岁的程序员疯狂的找bug2",
+                        "file_url": "https://auroraai-asset.visionular.cn/oss%3A//ali-vod-f/output-videoai/zhangwan-aigc/ai-genscale/1200/2025/12/15/13/e1ee449b-1ff9-4774-8f06-4afff24d4821/output.mp4?x-oss-credential=LTAI5tS2SAichCVt5idUKeg4%2F20251217%2Fcn-hangzhou%2Foss%2Faliyun_v4_request&x-oss-date=20251217T071420Z&x-oss-expires=1800&x-oss-signature=713fc46f3ddd11272908a843e64c9302118c331e23d75867828a3883abb4e8d0&x-oss-signature-version=OSS4-HMAC-SHA256",
+                        "first_frame_image": "",
+                        "last_frame_image": "",
+                        "model_name": "MiniMax-Hailuo-02",
+                        "duration": 10,
+                        "metadata": "",
+                        "status": "Success"
+                      },
+                      {
+                        "task_id": "e03de03e-3b17-4d39-99d5-75992e722249",
+                        "prompt": "20岁的程序员疯狂的找bug1",
+                        "file_url": "https://auroraai-asset.visionular.cn/oss%3A//ali-vod-f/output-videoai/zhangwan-aigc/ai-genscale/1200/2025/12/15/13/e1ee449b-1ff9-4774-8f06-4afff24d4821/output.mp4?x-oss-credential=LTAI5tS2SAichCVt5idUKeg4%2F20251217%2Fcn-hangzhou%2Foss%2Faliyun_v4_request&x-oss-date=20251217T071420Z&x-oss-expires=1800&x-oss-signature=713fc46f3ddd11272908a843e64c9302118c331e23d75867828a3883abb4e8d0&x-oss-signature-version=OSS4-HMAC-SHA256",
+                        "first_frame_image": "",
+                        "last_frame_image": "",
+                        "model_name": "MiniMax-Hailuo-02",
+                        "duration": 10,
+                        "metadata": "",
+                        "status": "Success"
+                      }
+                    ]
+                  },
+                  "msg": "",
+                  "request_id": "4ba2f06c-9ebd-4416-af8d-6ebe822b5962"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/trans-callback": {
+      "post": {
+        "summary": "超分转码回调",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "task_id": "202512151643d4vskgek0s88ner4fjt1",
+                "input": "https://video-product.cdn.minimax.io/inference_output/video/2025-12-13/d2cd66d4-ba7e-4288-bc7b-127618cc9dc3/output.mp4",
+                "output": "oss://ali-vod-f/output-videoai/zhangwan-aigc/ai-genscale/1200/2025/12/15/13/e1ee449b-1ff9-4774-8f06-4afff24d4821/output.mp4",
+                "template_name": "zhangwan_aigc_sr",
+                "storage_id": "94cc019acb94e21f",
+                "region": "cn-beijing",
+                "created_time": 1765777501,
+                "started_time": 1765777523,
+                "finished_time": 1765777537,
+                "status": "succeeded",
+                "duration": 10.12,
+                "source_bitrate": 4145,
+                "source_size": 5246016,
+                "source_resolution": "1366x768",
+                "source_framerate": 24,
+                "source_video_bitrate": 4141.95,
+                "source_audio_bitrate": 0,
+                "source_video_codec": "h264",
+                "source_audio_codec": "",
+                "output_size": 6791689,
+                "output_resolution": "2732x1536",
+                "output_framerate": 24,
+                "output_bitrate": 5366.27,
+                "ratio": 0,
+                "spend_time": 0,
+                "code": 0,
+                "progress": 100,
+                "message": "success",
+                "output_video_codec": "h264",
+                "output_audio_codec": "aac",
+                "format": "mp4",
+                "output_audio_samplerate": "44.1k",
+                "output_groups": [],
+                "bif_info": [],
+                "encrypt_info": "",
+                "custom_info": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "task_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "task_id"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "request_id"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "status": "completed",
+                    "task_id": "202512151345d4vq0nek0s88ner4cf00"
+                  },
+                  "msg": "",
+                  "request_id": "530a0616-75e0-48e4-abcf-643d00ed0185"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/v1/ai-callback/minmax": {
+      "post": {
+        "summary": "AI-minmax回调",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "task_id": 345718159954336,
+                "status": "Success",
+                "file_id": "345021724061771",
+                "video_width": 1920,
+                "video_height": 1080,
+                "base_resp": {
+                  "status_code": 0,
+                  "status_msg": "success"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "title": "返回信息"
+                    },
+                    "message": {
+                      "type": "string",
+                      "title": "报错描述"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "message"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
+    "schemas": {},
+    "responses": {},
     "securitySchemes": {
-      "bearerAuth": {
+      "bearer": {
         "type": "http",
         "scheme": "bearer"
+      },
+      "basic": {
+        "type": "http",
+        "scheme": "basic"
       }
     }
-  }
+  },
+  "servers": [],
+  "security": [
+    {
+      "basic": []
+    }
+  ]
 }

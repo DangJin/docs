@@ -1,33 +1,72 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API 概述'
+description: 'API 接口文档和快速开始指南'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## 欢迎
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+本文档提供了完整的 API 接口说明，包括图像生成、视频生成和回调接口等功能。
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="OpenAPI 规范文件"
+  icon="code"
+  href="/api-reference/openapi.json"
 >
-  View the OpenAPI specification file
+  查看完整的 OpenAPI 规范文件
 </Card>
 
-## Authentication
+## 认证方式
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+API 支持两种认证方式：
+
+### Bearer Token 认证
+
+大部分 API 端点使用 Bearer Token 认证：
 
 ```json
 "security": [
   {
-    "bearerAuth": []
+    "bearer": []
   }
 ]
 ```
+
+在请求头中添加：
+```
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Basic 认证
+
+部分回调接口使用 Basic 认证：
+
+```json
+"security": [
+  {
+    "basic": []
+  }
+]
+```
+
+## API 分类
+
+### 图像生成 API
+- **创建任务**: 提交图像生成任务
+- **查询任务**: 查询单个任务的执行状态和结果
+- **查询列表**: 分页获取任务列表
+
+### 视频生成 API
+- **创建任务**: 提交视频生成任务
+- **查询任务**: 查询单个任务的执行状态和结果
+- **查询列表**: 分页获取任务列表
+
+### 回调接口
+- **转码回调**: 接收超分转码完成通知
+- **AI 回调**: 接收 AI 处理完成通知
+
+## 快速开始
+
+1. 获取 API 认证凭证
+2. 查看对应的 API 端点文档
+3. 使用 API Playground 测试接口
+4. 集成到您的应用中

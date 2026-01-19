@@ -11,77 +11,47 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "API 参考",
         "groups": [
           {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
+            "group": "概述",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "图像生成",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/image-generation",
+              "api-reference/query-image-generation",
+              "api-reference/query-images"
+            ]
+          },
+          {
+            "group": "视频生成",
+            "pages": [
+              "api-reference/video-generation",
+              "api-reference/query-video-generation",
+              "api-reference/query-videos"
+            ]
+          },
+          {
+            "group": "回调接口",
+            "pages": [
+              "api-reference/trans-callback",
+              "api-reference/ai-callback-minmax"
             ]
           }
         ]
       }
     ],
     "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+      "anchors": []
     }
+  },
+  "openapi": "/api-reference/openapi.json",
+  "api": {
+    "baseUrl": ""
   },
   "logo": {
     "light": "/logo/light.svg",
