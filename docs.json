@@ -85,5 +85,6 @@
   },
   "icons": {
     "library": "fontawesome"
-  }
+  },
+  "description": "Link Every AI Model. One API. Lower Cost."
 }
